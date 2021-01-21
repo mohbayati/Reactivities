@@ -39,7 +39,7 @@ const App = () => {
     setEditMode(false);
   };
   const handleDeleteActivity = (activity : IActivity) => {
-    setActivities([...activities.filter(a => a.id === activity.id )]);
+    setActivities([...activities.filter(a => a.id !== activity.id )]);
   };
   useEffect(() => {
     axios
