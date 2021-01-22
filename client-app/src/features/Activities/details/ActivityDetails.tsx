@@ -24,8 +24,18 @@ export const ActivityDetails: React.FC<IProps> = (props) => {
         </Card.Content>
         <Card.Content extra>
           <ButtonGroup widths={2}>
-            <Button onClick={() => props.setEditMode(true)} basic color="blue" content="Edit" />
-            <Button onClick={() => props.setSelectedActivity(null)} basic color="grey" content="Cancel" />
+            <Button
+              onClick={() => props.setEditMode(true)}
+              basic
+              color="blue"
+              content="Edit"
+            />
+            <Button
+              onClick={() => props.setSelectedActivity(null)}
+              basic
+              color="grey"
+              content="Cancel"
+            />
           </ButtonGroup>
         </Card.Content>
       </Card>
