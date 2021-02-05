@@ -1,31 +1,28 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Grid, GridColumn } from "semantic-ui-react";
-import { ActivityDetails } from "../details/ActivityDetails";
-import ActivityForm from "../form/ActivityForm";
 import ActivityList from "./ActivityList";
 import { observer } from "mobx-react-lite";
-import ActivityStore from "../../../app/stores/activityStore";
+import { LoadingComponenet } from "../../../app/layout/LoadingComponenet";
+import ActivityStore  from "../../../app/stores/activityStore";
 
 
-export const ActivitiesDashboard: React.FC = observer((props) => {
+export const ActivitiesDashboard: React.FC = observer(() => {
+  
   const activityStore = useContext(ActivityStore);
-  const { editMode, selectedActivity } = activityStore;
+
+  useEffect(() => {
+    activityStore.loadactivities();
+  }, [activityStore]);
+
+  if (activityStore.loadingInitial.valueOf())
+    return <LoadingComponenet content="activities are loading ..." />;
   return (
     <Grid>
       <GridColumn width={10}>
         <ActivityList />
       </GridColumn>
       <GridColumn width={6}>
-        {selectedActivity && !editMode && (
-          <ActivityDetails/>
-        )}
-        {editMode && (
-          <ActivityForm
-            key={(selectedActivity && selectedActivity.id) || 0}
-            activity={selectedActivity!}
-            
-          />
-        )}
+        <h1>Activity Filter</h1>
       </GridColumn>
     </Grid>
   );
