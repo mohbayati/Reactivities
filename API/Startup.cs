@@ -96,7 +96,7 @@ namespace API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>

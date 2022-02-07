@@ -1,6 +1,6 @@
-import { Fragment } from "react";
+import { Fragment, useContext, useEffect } from "react";
 import { Container } from "semantic-ui-react";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 import "semantic-ui-css/semantic.min.css";
 import NavBar from "../../features/nav/NavBar";
 import { ActivitiesDashboard } from "../../features/Activities/dashboard/ActivitiesDashboard";
@@ -15,11 +15,29 @@ import homePage from "../../features/HomePage/homePage";
 import ActivityForm from "../../features/Activities/form/ActivityForm";
 import { ActivityDetails } from "../../features/Activities/details/ActivityDetails";
 import NotFound from "./NotFound";
+import LoginForm from "../../features/user/loginForm";
+import { RootStoreContext } from "../stores/rootStore";
+import { LoadingComponenet } from "./LoadingComponenet";
+import ModalContainer from "../common/modals/modalContainer";
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
+  const rootStore = useContext(RootStoreContext);
+  const { setAppLoaded, token } = rootStore.commonStore;
+  const { getUser } = rootStore.userStore;
+  useEffect(() => {
+    if (token) {
+      getUser().finally(() => setAppLoaded());
+    } else {
+      setAppLoaded();
+    }
+  }, [token, getUser, setAppLoaded]);
+
+  if (!setAppLoaded) return <LoadingComponenet content="Loading app..." />;
+
   return (
     <Fragment>
-      <ToastContainer position='bottom-right'/>
+      <ModalContainer />
+      <ToastContainer position="bottom-right" />
       <Route exact path={"/"} component={homePage} />
       <Route
         path={"/(.+)"}
@@ -39,7 +57,8 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
                   component={ActivityForm}
                 />
                 <Route path={"/activities/:id"} component={ActivityDetails} />
-                <Route component={NotFound}/>
+                <Route path="/login" component={LoginForm} />
+                <Route component={NotFound} />
               </Switch>
             </Container>
           </Fragment>
