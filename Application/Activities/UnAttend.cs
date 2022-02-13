@@ -33,7 +33,7 @@ namespace Application.Activities
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
                 var activity = await _context.Activities
-                    .FindAsync(request.Id, cancellationToken);
+                    .FindAsync(request.Id);
                 if (activity == null)
                     throw new RestException(HttpStatusCode.NotFound,
                         new { Activity = "Could not find activity" });
@@ -47,8 +47,8 @@ namespace Application.Activities
 
                 if (attendance == null)
                     return Unit.Value;
-                
-                if(attendance.IsHost)
+
+                if (attendance.IsHost)
                     throw new RestException(HttpStatusCode.BadRequest,
                         new { Attendance = "You cannot remove yourself as host" });
 
