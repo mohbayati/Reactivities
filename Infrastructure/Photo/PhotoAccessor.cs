@@ -28,16 +28,16 @@ namespace Infrastructure.Photo
         public PhotoUploadResult AddPhoto(IFormFile file)
         {
             var uploudResult = new ImageUploadResult();
-            if(file.Length>0)
+            if (file.Length > 0)
             {
-                using (var stream=file.OpenReadStream())
+                using (var stream = file.OpenReadStream())
                 {
                     var uploadParams = new ImageUploadParams
                     {
                         File = new FileDescription(file.FileName, stream)
                     };
-                    uploudResult=_cloudinary.Upload(uploadParams);
-                }  
+                    uploudResult = _cloudinary.Upload(uploadParams);
+                }
             }
             if (uploudResult.Error != null)
                 throw new Exception(uploudResult.Error.Message);
@@ -51,8 +51,8 @@ namespace Infrastructure.Photo
         public string Delete(string publicId)
         {
             var deleteParams = new DeletionParams(publicId);
-            var result= _cloudinary.Destroy(deleteParams);
-            return result.Result == "ok" ? result.Result : new;
+            var result = _cloudinary.Destroy(deleteParams);
+            return result.Result == "ok" ? result.Result : null;
         }
     }
 }
