@@ -37,7 +37,7 @@ namespace Application.Activities
                     throw new RestException(HttpStatusCode.NotFound, new { activity = "Not Found" });
 
                 var activityToReturn=_mapper.Map<Activity,ActivityDto>(activity);
-                return activityToReturn;
+                 return activityToReturn;
             }
         }
     }

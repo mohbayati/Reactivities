@@ -1,4 +1,10 @@
 import {
+  HubConnection,
+  HubConnectionBuilder,
+  LogLevel,
+} from "@microsoft/signalr";
+import { Console } from "console";
+import {
   action,
   computed,
   makeObservable,
@@ -28,7 +34,49 @@ export default class ActivityStore {
   @observable submitting = false;
   @observable target = "";
   @observable loading = false;
+  @observable.ref hunconnection: HubConnection | null = null;
 
+  @action createHunConnection = (activityId: string) => {
+    this.hunconnection = new HubConnectionBuilder()
+      .withUrl("http://localhost:5000/chat", {
+        accessTokenFactory: () => this.rootStore.commonStore.token!,
+      })
+      .configureLogging(LogLevel.Information)
+      .build();
+    this.hunconnection
+      .start()
+      .then(() => console.log(this.hunconnection!.state))
+      .then(() => {
+        console.log("Attempt to join group");
+        this.hunconnection?.invoke("AddToGroup", activityId);
+      })
+      .catch((error) => console.log("Error establishing connection", error));
+    this.hunconnection.on("ReceiveComment", (comment) => {
+      runInAction(() => {
+        console.log(comment);
+        this.activity!.comments.push(comment);
+      });
+    });
+
+    this.hunconnection.on("Send", (meesage) => toast.info(meesage));
+  };
+  @action stopConnection = () => {
+    this.hunconnection!.invoke("RemoveFromGroup", this.activity!.id)
+      .then(() => {
+        this.hunconnection!.stop();
+      })
+      .then(() => console.log("Connection stopped"))
+      .catch((err) => console.log(err));
+  };
+  @action addComment = async (values: any) => {
+    values.activityId = this.activity!.id;
+    try {
+      console.log(values);
+      await this.hunconnection!.invoke("SendComment", values);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   @computed get activitiesByDate() {
     return this.groupActivityByDate(Array.from(this.activityRegistry.values()));
   }
@@ -104,6 +152,7 @@ export default class ActivityStore {
       let attendees = [];
       attendees.push(attendee);
       activity.attendees = attendees;
+      activity.comments = [];
       activity.isHost = true;
       runInAction(() => {
         this.activityRegistry.set(activity.id, activity);
