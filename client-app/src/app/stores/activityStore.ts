@@ -3,7 +3,6 @@ import {
   HubConnectionBuilder,
   LogLevel,
 } from "@microsoft/signalr";
-import { Console } from "console";
 import {
   action,
   computed,
