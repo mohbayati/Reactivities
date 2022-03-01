@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Tab } from "semantic-ui-react";
+import ProfileActivities from "./profileActivities";
 import ProfileDescription from "./profileDescription";
 import ProfileFollowings from "./profileFollowings";
 import ProfilePhotos from "./profilePhotos";
@@ -9,7 +10,7 @@ const panes = [
   { menuItem: "Photos", render: () => <ProfilePhotos /> },
   {
     menuItem: "Activities",
-    render: () => <Tab.Pane>Activities content</Tab.Pane>,
+    render: () => <ProfileActivities />,
   },
   {
     menuItem: "Followers",

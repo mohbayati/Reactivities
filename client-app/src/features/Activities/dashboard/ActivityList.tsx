@@ -21,7 +21,6 @@ const ActivityList: React.FC = () => {
           </Item.Group>
         </Fragment>
       ))}
-      ;
     </Fragment>
   );
 };

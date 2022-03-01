@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { history } from "../..";
 import { dataURItoBlob } from "../common/util/util";
-import { IActivity } from "../models/activity";
+import { IActivitiesEnvelope, IActivity } from "../models/activity";
 import { IPhoto, IProfile } from "../models/profile";
 import { IUser, IUserFromValues } from "../models/user";
 
@@ -67,7 +67,11 @@ const request = {
 };
 
 const Activities = {
-  list: (): Promise<IActivity[]> => request.get("/activities"),
+  list: (params: URLSearchParams): Promise<IActivitiesEnvelope> =>
+    axios
+      .get("/activities", { params: params })
+      .then(sleep(1000))
+      .then(responseBody),
   details: (id: string): Promise<IActivity> => request.get(`/activities/${id}`),
   create: (activity: IActivity) => request.post("/activities", activity),
   update: (activity: IActivity) =>
@@ -99,6 +103,8 @@ const Profiles = {
   unfollow: (username: string) => request.del(`/profiles/${username}/follow`),
   listFollowings: (username: string, predicate: string) =>
     request.get(`/profiles/${username}/follow?predicate=${predicate}`),
+  listActivities: (username: string, predicate: string) =>
+    request.get(`/profiles/${username}/activities?predicate=${predicate}`),
 };
 
 const objects = {
