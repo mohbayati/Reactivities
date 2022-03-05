@@ -3,7 +3,6 @@ import {
   HubConnectionBuilder,
   LogLevel,
 } from "@microsoft/signalr";
-import { throws } from "assert";
 import {
   action,
   computed,
@@ -11,6 +10,7 @@ import {
   observable,
   reaction,
   runInAction,
+  toJS,
 } from "mobx";
 import { SyntheticEvent } from "react";
 import { toast } from "react-toastify";
@@ -81,7 +81,7 @@ export default class ActivityStore {
 
   @action createHunConnection = (activityId: string) => {
     this.hunconnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5000/chat", {
+      .withUrl(process.env.REACT_APP_API_CHAT_URL!, {
         accessTokenFactory: () => this.rootStore.commonStore.token!,
       })
       .configureLogging(LogLevel.Information)
@@ -142,7 +142,6 @@ export default class ActivityStore {
   @action loadactivities = async () => {
     this.loadingInitial = true;
     try {
-      console.log(this.axiosParams);
       const activitiesEnvelopes = await agent.Activities.list(this.axiosParams);
       const { activities, activityCount } = activitiesEnvelopes;
       runInAction(() => {
@@ -165,7 +164,7 @@ export default class ActivityStore {
 
     if (activity) {
       this.activity = activity;
-      return activity;
+      return toJS(activity);
     } else {
       try {
         this.loadingInitial = false;
