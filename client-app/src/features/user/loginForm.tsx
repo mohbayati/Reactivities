@@ -31,7 +31,7 @@ const LoginForm = () => {
         pristine,
         dirtySinceLastSubmit,
       }) => (
-        <Form onSubmit={handleSubmit} error>
+        <Form onSubmit={handleSubmit} error autComplete="off">
           <Header
             content="Login to Reactivites"
             color="teal"

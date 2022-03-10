@@ -51,11 +51,6 @@ axios.interceptors.response.use(undefined, (error) => {
 
 const responseBody = (response: AxiosResponse) => response.data;
 
-const sleep = (ms: number) => (response: AxiosResponse) =>
-  new Promise<AxiosResponse>((resolve) =>
-    setTimeout(() => resolve(response), ms)
-  );
-
 const request = {
   get: (url: string) => axios.get(url).then(responseBody),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
@@ -91,6 +86,7 @@ const User = {
     request.post(`/user/login`, user),
   register: (user: IUserFromValues): Promise<IUser> =>
     request.post(`/user/register`, user),
+  refreshToken: (): Promise<IUser> => request.post(`/user/refreshToken`, {}),
 };
 
 const Profiles = {

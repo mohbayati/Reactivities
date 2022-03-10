@@ -51,13 +51,12 @@ namespace Application.User
                     throw new RestException(System.Net.HttpStatusCode.Unauthorized);
                 var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
                 if (result.Succeeded)
-                    return new User
-                    {
-                        Username = user.UserName,
-                        Token = _jwtGenerator.CreateToken(user),
-                        DisplayName = user.DisplayName,
-                        Image = user.Photos.FirstOrDefault(x=>x.IsMain)?.Url
-                    };
+                {
+                    var refreshToken = _jwtGenerator.GenerateRefreshToken();
+                    user.RefreshTokens.Add(refreshToken);
+                    await _userManager.UpdateAsync(user);
+                    return new User(user, _jwtGenerator, refreshToken.Token);
+                }
                 throw new RestException(System.Net.HttpStatusCode.Unauthorized);
             }
         }
